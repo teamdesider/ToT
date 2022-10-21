@@ -20,10 +20,10 @@ from openzeppelin.token.erc721.library import ERC721
 from openzeppelin.introspection.erc165.library import ERC165
 from openzeppelin.access.ownable.library import Ownable
 
-from cairolib.array import arr_concat
+from dwutils.array import arr_concat
 from dwutils.merkle import merkle_verify
 
-from Str import (
+from dwutils.Str import (
     literal_from_number,
     literal_concat_known_length_dangerous
 )
