@@ -377,7 +377,7 @@ func reBlindChip{
         range_check_ptr
 }(chip_address: felt, proof_len: felt, proof: felt*, token_id: Uint256) {
     alloc_locals;
-
+    
     let (amount_hash) = hash2{hash_ptr=pedersen_ptr}(1, 0);
     let (leaf) = hash2{hash_ptr=pedersen_ptr}(chip_address, amount_hash);
     let (root) = merkle_root.read();
@@ -390,6 +390,10 @@ func reBlindChip{
     let (local token_owner: felt) = ownerOf(token_id=token_id);
     with_attr error_message("Caller doesn't own the asset"){
         assert caller = token_owner;
+    }
+    let (is_exist_id) = chip_token.read(chip_address);
+    with_attr error_message("chip has been used"){
+        assert is_exist_id = 0;
     }
 
     let (old_chip_address) = token_chip.read(token_id);
