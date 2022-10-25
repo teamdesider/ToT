@@ -14,7 +14,7 @@ interface ITOT721{
     // @param {uint256} tokenId NFT tokenId to unbind
     function unBlindChip(uint256 tokenId) external;
 
-    // @description: 
+    // @description: Bind a new chip to the NFT, only the owner of the NFT has permission to re-bind
     // @param {string memory} New NFC chip address of the entity model 
     // @param {bytes32[] calldata} Information required for verification of whether the model chip address is in the whitelist
     // @param {uint256} tokenId The tokenId that needs to reset the chip
