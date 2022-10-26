@@ -23,11 +23,6 @@ from openzeppelin.access.ownable.library import Ownable
 from dwutils.array import arr_concat
 from dwutils.merkle import merkle_verify
 
-from dwutils.Str import (
-    literal_from_number,
-    literal_concat_known_length_dangerous
-)
-
 //
 // storage_var
 //
@@ -196,15 +191,34 @@ func getTokenUri{
     if (ret_base_token_uri_len != 0) {
         let (token_uri_detail) = ERC721.token_uri(token_id);
 
+        _base_token_uri(0, ret_base_token_uri_len, ret_base_token_uri);
+        let (local res_token_uri) = alloc();
         if (token_uri_detail != 0) {
             // We use the baseURI set by the owner, returning concat(baseURI,token_id);
-            _base_token_uri(0, ret_base_token_uri_len, ret_base_token_uri);
-            let (local res_token_uri) = alloc();
             res_token_uri[0] = token_uri_detail;
             let (ret_token_uri_len, ret_token_uri) = arr_concat(
                 ret_base_token_uri_len, ret_base_token_uri, 1, res_token_uri
             );
             return (ret_token_uri_len, ret_token_uri);
+        } else {
+            assert res_token_uri[0] = token_id.low;
+            let (lucky) = token_lucky.read(token_id);
+            if (lucky.low == 1) {
+                assert res_token_uri[1] = '.json';
+                let (ret_token_uri_len, ret_token_uri) = arr_concat(
+                    ret_base_token_uri_len, ret_base_token_uri, 2, res_token_uri
+                );
+                return (ret_token_uri_len, ret_token_uri);
+            } else {
+                assert res_token_uri[1] = '-';
+                assert res_token_uri[2] = lucky.low;
+                assert res_token_uri[3] = '.json';
+                let (ret_token_uri_len, ret_token_uri) = arr_concat(
+                    ret_base_token_uri_len, ret_base_token_uri, 4, res_token_uri
+                );
+                return (ret_token_uri_len, ret_token_uri);
+            }
+            
         }
     }
 
@@ -480,9 +494,6 @@ func touchToEarn{
         chip_token.write(chip_address, token_id.low);
         token_lucky.write(token_id, Uint256(1, 0));
 
-        let _token_uri: felt = token_uri_by_lucky(token_id);
-        ERC721._set_token_uri(token_id, _token_uri);
-
         do_each(token_id, contract_20_address, caller, now_tm);
         return ();
     } else {
@@ -573,8 +584,6 @@ func burnToUpgrade{
 
     let (new_lucky, _) = uint256_add(lucky, Uint256(1, 0));
     token_lucky.write(token_id, new_lucky);
-    let new_token_uri: felt = token_uri_by_lucky(token_id);
-    ERC721._set_token_uri(token_id, new_token_uri);
 
     return ();
 }
@@ -588,44 +597,4 @@ func burn_amount_by_lucky{
     let w = Uint256(1000000000000000000, 0);
     let (amount, _) = uint256_mul(tmp, w);
     return (amount=amount);
-}
-
-func token_uri_by_lucky{
-        syscall_ptr: felt*, 
-        pedersen_ptr: HashBuiltin*, 
-        range_check_ptr
-}(token_id: Uint256) -> (token_uri:felt) {
-    alloc_locals;
-
-    let (local token_id_len: felt) = get_num_length(token_id.low, 1, 10);
-    let (local s_token_id: felt) = literal_from_number(token_id.low);
-    let lucky: Uint256 = getLucky(token_id);
-    if (lucky.low == 1) {
-        let (local step1: felt) = literal_concat_known_length_dangerous(s_token_id, '.json', token_id_len + 5);
-        return (token_uri=step1);
-    } else {
-        let (local lucky_length: felt) = get_num_length(lucky.low, 1, 10);
-
-        let (local step1: felt) = literal_concat_known_length_dangerous(s_token_id, '-', token_id_len + 1);
-        let (local s_lucky: felt) = literal_from_number(lucky.low);
-        tempvar len_2 = token_id_len + lucky_length;
-        let (local step2: felt) = literal_concat_known_length_dangerous(step1, s_lucky, len_2 + 1);
-        let (local step3: felt) = literal_concat_known_length_dangerous(step2, '.json', len_2 + 6);
-
-        return (token_uri=step3);
-    }
-}
-
-func get_num_length{
-        range_check_ptr
-}(num: felt, idx: felt, m: felt)->(len: felt) {
-    alloc_locals;
-
-    let n: felt = num + 1;
-    local r: felt = is_nn(m - n);
-    if (r == 1) {
-        return (len=idx);
-    }
-
-    return get_num_length(num, idx + 1, m * 10);
 }
