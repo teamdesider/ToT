@@ -35,11 +35,11 @@ func base_token_uri(index : felt) -> (res : felt){
 }
 
 @storage_var
-func token_lucky(token_id: Uint256) -> (lucky: Uint256){
+func token_lucky(tokenId: Uint256) -> (lucky: Uint256){
 }
 
 @storage_var
-func token_earn_tm(token_id: Uint256) -> (tm: felt){
+func token_earn_tm(tokenId: Uint256) -> (tm: felt){
 }
 // The time interval between two touches
 const EARN_INTERVAL = 300;
@@ -50,11 +50,11 @@ func token_counter() -> (counter: Uint256) {
 }
 
 @storage_var
-func chip_token(chip_address: felt) -> (token_id_low: felt) {
+func chip_token(chip_address: felt) -> (tokenId_low: felt) {
 }
 
 @storage_var
-func token_chip(token_id: Uint256) -> (chip_address: felt) {
+func token_chip(tokenId: Uint256) -> (chip_address: felt) {
 }
 
 @storage_var
@@ -120,8 +120,8 @@ func ownerOf{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-}(token_id: Uint256) -> (owner: felt) {
-    return ERC721.owner_of(token_id);
+}(tokenId: Uint256) -> (owner: felt) {
+    return ERC721.owner_of(tokenId);
 }
 
 @view
@@ -129,8 +129,8 @@ func getApproved{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-}(token_id: Uint256) -> (approved: felt) {
-    return ERC721.get_approved(token_id);
+}(tokenId: Uint256) -> (approved: felt) {
+    return ERC721.get_approved(tokenId);
 }
 
 @view
@@ -158,8 +158,8 @@ func getLucky{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-}(token_id: Uint256) -> (lucky: Uint256){
-    let (lucky) = token_lucky.read(token_id);
+}(tokenId: Uint256) -> (lucky: Uint256){
+    let (lucky) = token_lucky.read(tokenId);
     return (lucky=lucky);
 }
 
@@ -169,19 +169,19 @@ func tokenURI{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-}(token_id: Uint256) -> (token_uri_len : felt, token_uri : felt*){
-    return getTokenUri(token_id);
+}(tokenId: Uint256) -> (tokenURI_len : felt, tokenURI : felt*){
+    return getTokenUri(tokenId);
 }
 
 func getTokenUri{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-}(token_id: Uint256) -> (token_uri_len : felt, token_uri : felt*){
+}(tokenId: Uint256) -> (tokenURI_len : felt, tokenURI : felt*){
     alloc_locals;
 
-    // ensure token with token_id exists
-    let exists = ERC721._exists(token_id);
+    // ensure token with tokenId exists
+    let exists = ERC721._exists(tokenId);
     with_attr error_message("ERC721_Token_Metadata: URI query for nonexistent token"){
         assert exists = TRUE;
     }
@@ -189,20 +189,20 @@ func getTokenUri{
     let (local ret_base_token_uri) = alloc();
     let (local ret_base_token_uri_len) = base_token_uri_len.read();
     if (ret_base_token_uri_len != 0) {
-        let (token_uri_detail) = ERC721.token_uri(token_id);
+        let (token_uri_detail) = ERC721.token_uri(tokenId);
 
         _base_token_uri(0, ret_base_token_uri_len, ret_base_token_uri);
         let (local res_token_uri) = alloc();
         if (token_uri_detail != 0) {
-            // We use the baseURI set by the owner, returning concat(baseURI,token_id);
+            // We use the baseURI set by the owner, returning concat(baseURI,tokenId);
             res_token_uri[0] = token_uri_detail;
             let (ret_token_uri_len, ret_token_uri) = arr_concat(
                 ret_base_token_uri_len, ret_base_token_uri, 1, res_token_uri
             );
             return (ret_token_uri_len, ret_token_uri);
         } else {
-            assert res_token_uri[0] = token_id.low;
-            let (lucky) = token_lucky.read(token_id);
+            assert res_token_uri[0] = tokenId.low;
+            let (lucky) = token_lucky.read(tokenId);
             if (lucky.low == 1) {
                 assert res_token_uri[1] = '.json';
                 let (ret_token_uri_len, ret_token_uri) = arr_concat(
@@ -223,7 +223,7 @@ func getTokenUri{
     }
 
     // If both base_token_uri and token_uri are undefined, return empty array
-    return (token_uri_len=0, token_uri=ret_base_token_uri);
+    return (tokenURI_len=0, tokenURI=ret_base_token_uri);
 }
 
 @view 
@@ -260,8 +260,8 @@ func getLastEarnTime{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-}(token_id: Uint256) -> (tm: felt){
-    let tm = token_earn_tm.read(token_id);
+}(tokenId: Uint256) -> (tm: felt){
+    let tm = token_earn_tm.read(tokenId);
     return (tm);
 }
 
@@ -274,8 +274,8 @@ func approve{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-}(to: felt, token_id: Uint256) {
-    ERC721.approve(to, token_id);
+}(to: felt, tokenId: Uint256) {
+    ERC721.approve(to, tokenId);
     return ();
 }
 
@@ -294,8 +294,8 @@ func transferFrom{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-}(from_: felt, to: felt, token_id: Uint256) {
-    ERC721.transfer_from(from_, to, token_id);
+}(from_: felt, to: felt, tokenId: Uint256) {
+    ERC721.transfer_from(from_, to, tokenId);
     return ();
 }
 
@@ -304,8 +304,8 @@ func safeTransferFrom{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-}(from_: felt, to: felt, token_id: Uint256, data_len: felt, data: felt*) {
-    ERC721.safe_transfer_from(from_, to, token_id, data_len, data);
+}(from_: felt, to: felt, tokenId: Uint256, data_len: felt, data: felt*) {
+    ERC721.safe_transfer_from(from_, to, tokenId, data_len, data);
     return ();
 }
 
@@ -375,11 +375,11 @@ func unBlindChip{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-}(token_id: Uint256) {
+}(tokenId: Uint256) {
     alloc_locals;
-    let (local chip_address: felt) = token_chip.read(token_id);
+    let (local chip_address: felt) = token_chip.read(tokenId);
 
-    token_chip.write(token_id, '');
+    token_chip.write(tokenId, '');
     chip_token.write(chip_address, abandoned_id);
     return ();
 }
@@ -389,7 +389,7 @@ func reBlindChip{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-}(chip_address: felt, proof_len: felt, proof: felt*, token_id: Uint256) {
+}(chip_address: felt, proof_len: felt, proof: felt*, tokenId: Uint256) {
     alloc_locals;
     
     let (amount_hash) = hash2{hash_ptr=pedersen_ptr}(1, 0);
@@ -401,7 +401,7 @@ func reBlindChip{
     }
 
     let (caller) = get_caller_address();
-    let (local token_owner: felt) = ownerOf(token_id=token_id);
+    let (local token_owner: felt) = ownerOf(tokenId=tokenId);
     with_attr error_message("Caller doesn't own the asset"){
         assert caller = token_owner;
     }
@@ -410,10 +410,10 @@ func reBlindChip{
         assert is_exist_id = 0;
     }
 
-    let (old_chip_address) = token_chip.read(token_id);
+    let (old_chip_address) = token_chip.read(tokenId);
 
-    token_chip.write(token_id, chip_address);
-    chip_token.write(chip_address, token_id.low);
+    token_chip.write(tokenId, chip_address);
+    chip_token.write(chip_address, tokenId.low);
     //unblind old
     chip_token.write(old_chip_address, abandoned_id);
     return ();
@@ -443,8 +443,8 @@ func _is_abandoned_chip{
         syscall_ptr: felt*, 
         pedersen_ptr: HashBuiltin*, 
         range_check_ptr
-}(token_id_low: felt) -> felt {
-    if (token_id_low == abandoned_id) {
+}(tokenId_low: felt) -> felt {
+    if (tokenId_low == abandoned_id) {
         return TRUE;
     }
 
@@ -467,55 +467,55 @@ func touchToEarn{
         assert proof_valid = 1;
     }
 
-    let (token_id_low) = chip_token.read(chip_address);
+    let (tokenId_low) = chip_token.read(chip_address);
 
     let (caller) = get_caller_address();
 
     let (now_tm) = get_block_timestamp();
     // is exist chip
-    if (token_id_low == 0) {
+    if (tokenId_low == 0) {
         // token id must stark from 1, because read cannot check not exist or zero
         let (current_counter) = token_counter.read();
-        let (next_token_id, _) = uint256_add(current_counter, Uint256(1, 0));
-        let _isabandonedChip = _is_abandoned_chip(next_token_id.low);
+        let (next_tokenId, _) = uint256_add(current_counter, Uint256(1, 0));
+        let _isabandonedChip = _is_abandoned_chip(next_tokenId.low);
         if (_isabandonedChip == TRUE) {
-            let (next_id, _) = uint256_add(next_token_id, Uint256(1, 0));
+            let (next_id, _) = uint256_add(next_tokenId, Uint256(1, 0));
             token_counter.write(next_id);
         } else {
-            token_counter.write(next_token_id);
+            token_counter.write(next_tokenId);
         }
-        let (token_id) = token_counter.read();
+        let (tokenId) = token_counter.read();
 
         let _data_len : felt = 0;
         let (local _data : felt*) = alloc();
-        ERC721._safe_mint(caller, token_id, _data_len, _data);
+        ERC721._safe_mint(caller, tokenId, _data_len, _data);
 
-        token_chip.write(token_id, chip_address);
-        chip_token.write(chip_address, token_id.low);
-        token_lucky.write(token_id, Uint256(1, 0));
+        token_chip.write(tokenId, chip_address);
+        chip_token.write(chip_address, tokenId.low);
+        token_lucky.write(tokenId, Uint256(1, 0));
 
-        do_each(token_id, contract_20_address, caller, now_tm);
+        do_each(tokenId, contract_20_address, caller, now_tm);
         return ();
     } else {
-        let (token_id_low) = chip_token.read(chip_address);
-        let _isabandonedChip = _is_abandoned_chip(token_id_low);
+        let (tokenId_low) = chip_token.read(chip_address);
+        let _isabandonedChip = _is_abandoned_chip(tokenId_low);
         with_attr error_message("This Chip is abandoned"){
             assert _isabandonedChip = FALSE;
         }
-        let token_id = Uint256(token_id_low, 0);
+        let tokenId = Uint256(tokenId_low, 0);
 
-        let (local token_owner: felt) = ownerOf(token_id=token_id);
+        let (local token_owner: felt) = ownerOf(tokenId=tokenId);
         with_attr error_message("Caller doesn't own the asset"){
             assert caller = token_owner;
         }
-        let (last_tm) = token_earn_tm.read(token_id);
+        let (last_tm) = token_earn_tm.read(tokenId);
         tempvar diff = now_tm - last_tm;
 
         with_attr error_message("please wait for some time"){
             assert_nn(diff - EARN_INTERVAL);
         }
 
-        do_each(token_id, contract_20_address, caller, now_tm);
+        do_each(tokenId, contract_20_address, caller, now_tm);
         return ();
     }
 }
@@ -524,14 +524,14 @@ func do_each{
         syscall_ptr : felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr,
-}(token_id: Uint256, contract_20_address: felt, caller: felt, now_tm: felt) {
-    let lucky: Uint256 = token_lucky.read(token_id);
+}(tokenId: Uint256, contract_20_address: felt, caller: felt, now_tm: felt) {
+    let lucky: Uint256 = token_lucky.read(tokenId);
     let amount: Uint256 = earn_amount_by_lucky(lucky);
     IMyTokenContract.touchToEarn(
         contract_address=contract_20_address, user=caller, amount=amount
     );
 
-    token_earn_tm.write(token_id, now_tm);
+    token_earn_tm.write(tokenId, now_tm);
     return ();
 }
 
@@ -566,16 +566,16 @@ func burnToUpgrade{
         syscall_ptr: felt*, 
         pedersen_ptr: HashBuiltin*, 
         range_check_ptr
-}(contract_20_address: felt, token_id: Uint256) {
+}(contract_20_address: felt, tokenId: Uint256) {
     alloc_locals;
     let (caller) = get_caller_address();
 
-    let (local token_owner: felt) = ownerOf(token_id=token_id);
+    let (local token_owner: felt) = ownerOf(tokenId=tokenId);
     with_attr error_message("Caller doesn't own the asset") {
         assert caller = token_owner;
     }
 
-    let lucky: Uint256 = getLucky(token_id=token_id);
+    let lucky: Uint256 = getLucky(tokenId=tokenId);
     let amount: Uint256 = burn_amount_by_lucky(lucky);
 
     IMyTokenContract.burnToUpgrade(
@@ -583,7 +583,7 @@ func burnToUpgrade{
     );
 
     let (new_lucky, _) = uint256_add(lucky, Uint256(1, 0));
-    token_lucky.write(token_id, new_lucky);
+    token_lucky.write(tokenId, new_lucky);
 
     return ();
 }
