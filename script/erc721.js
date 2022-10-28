@@ -35,7 +35,7 @@ console.log(account, account.address);
 
 const erc20Address = "0x05eebdd67ca9ccb979067c8145998d74d7f5cd2bef3f8b4ccddb03b36cfadec3";
 
-const erc721Address = "0x015c18c64482285df7340d7db9cdaadb84814d5e703078371cd98a54d38e4a9b";
+const erc721Address = "0x0444c9279db773915d543af617a8155b23592753248c5aa3f49235964cc74ddf";
 
 const tokenAbi = json.parse(
     fs.readFileSync("./dwgame_abi.json").toString("ascii")
@@ -86,7 +86,7 @@ async function touchToEarn() {
       },
       undefined,
       { 
-        maxFee: "9999999005330001" 
+        maxFee: "9999999005330002" 
       }
     );
 

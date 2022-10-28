@@ -28,7 +28,7 @@ const account = new Account(
 
 console.log(account, account.address);
 
-const erc721Address = "0x015c18c64482285df7340d7db9cdaadb84814d5e703078371cd98a54d38e4a9b";
+const erc721Address = "0x0444c9279db773915d543af617a8155b23592753248c5aa3f49235964cc74ddf";
 
 const tokenAbi = json.parse(
     fs.readFileSync("./dwgame_abi.json").toString("ascii")
@@ -75,7 +75,7 @@ async function setMerkleRoot() {
         {
           contractAddress: erc721Address,
           entrypoint: "setMerkleRoot",
-          calldata: ["660906365176751370884167549084738602661764337276504303123002510575104783648"],
+          calldata: ["3206837604464364067061855008272543432624840296251886444827833974050569612848"],
         },
         undefined,
         { 
