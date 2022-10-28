@@ -23,6 +23,11 @@ from openzeppelin.access.ownable.library import Ownable
 from dwutils.array import arr_concat
 from dwutils.merkle import merkle_verify
 
+from dwutils.Str import (
+    literal_from_number
+)
+
+
 //
 // storage_var
 //
@@ -201,7 +206,8 @@ func getTokenUri{
             );
             return (ret_token_uri_len, ret_token_uri);
         } else {
-            assert res_token_uri[0] = tokenId.low;
+            let (local s_token_id: felt) = literal_from_number(tokenId.low);
+            assert res_token_uri[0] = s_token_id;
             let (lucky) = token_lucky.read(tokenId);
             if (lucky.low == 1) {
                 assert res_token_uri[1] = '.json';
@@ -210,8 +216,9 @@ func getTokenUri{
                 );
                 return (ret_token_uri_len, ret_token_uri);
             } else {
+                let (local s_token_lucky: felt) = literal_from_number(lucky.low);
                 assert res_token_uri[1] = '-';
-                assert res_token_uri[2] = lucky.low;
+                assert res_token_uri[2] = s_token_lucky;
                 assert res_token_uri[3] = '.json';
                 let (ret_token_uri_len, ret_token_uri) = arr_concat(
                     ret_base_token_uri_len, ret_base_token_uri, 4, res_token_uri
