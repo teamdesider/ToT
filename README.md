@@ -79,4 +79,4 @@ main.py -- executing python main.py will provide API services, which provide a c
 merkle.py -- serve for generating auth information, executing python merkle.py can get root value of Merkle tree.
 The test is in Cairo virtual environment, and Python version 3.9.
 
-#### The test is in Cairo virtual environment, and Python version 3.9.
+#### The contract is not officially released, which means it may differ by day. Please be patient and confident.
