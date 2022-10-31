@@ -96,3 +96,8 @@ The project is a bridge connecting the virtual and real world, which is a lighth
 The contract is not officially released, which means it may differ by day. Please be patient and confident.
 
 #### The contract is not officially released, which means it may differ by day. Please be patient and confident.
+
+### Bonus
+A android app embedded the system can be download here
+
+https://turtle-v2-artifacts.s3.amazonaws.com/android/3b691c7d-e79e-47cf-9259-2657172b10b5-d809e6c9ae744ad48dae5d8826d5402c/application-archive.apk
