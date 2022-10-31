@@ -42,9 +42,9 @@ The Starknet provides an ideal environment for the project, which provides a rea
 
 ### Design Diagram
 #### Contract Architecture Design
-
+![image](https://raw.githubusercontent.com/flyergosh/ToT/main/img_path/Contract_Architecture_Design.jpeg)
 #### Application flow diagram
-
+![image](https://raw.githubusercontent.com/flyergosh/ToT/main/img_path/Application_flow_diagram.jpeg)
 ### Test
 There are test scripts in the scripts directory.
 
